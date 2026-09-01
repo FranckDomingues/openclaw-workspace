@@ -1,0 +1,100 @@
+# Sanitized VPS terminal command history
+# Sensitive credentials/key material are excluded or redacted.
+
+pwd
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo bash -c "echo '/swapfile none swap sw 0 0' >> /etc/fstab"
+sudo swapon --show
+curl -fsSL https://openclaw.ai/install.sh | bash
+openclaw onboard --classic
+systemctl --user restart openclaw-gateway.service
+openclaw onboard --classic
+openclaw chat
+cd ~/.openclaw/workspace
+echo "=== LOCATION ==="
+pwd
+echo
+echo "=== FILES ==="
+ls -la
+echo
+echo "=== SIZE ==="
+du -sh .
+echo
+echo "=== GIT STATUS ==="
+git status 2>&1 || true
+cd ~/.openclaw/workspace
+echo "=== GIT REMOTE ==="
+git remote -v
+echo
+echo "=== POTENTIAL SECRET FILES / REFERENCES ==="
+grep -RIlE 'api[_-]?key|token|secret|password|bearer|authorization|private[_-]?key' . --exclude-dir=.git 2>/dev/null || echo "No obvious secret references found"
+echo
+echo "=== STATE JSON KEYS ONLY ==="
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+p = Path("openclaw-workspace-state.json")
+
+try:
+    data = json.loads(p.read_text())
+    if isinstance(data, dict):
+        print("Top-level keys:")
+        for key in data:
+            print(f" - {key}")
+    else:
+        print("JSON root type:", type(data).__name__)
+except Exception as e:
+    print("Could not inspect JSON:", e)
+PY
+
+echo
+echo "=== STATUS ==="
+git status --short
+cd ~/.openclaw/workspace
+echo "=== AGENTS SECURITY MATCHES ==="
+python3 - <<'PY'
+import re
+from pathlib import Path
+
+pattern = re.compile(
+    r'api[_-]?key|token|secret|password|bearer|authorization|private[_-]?key',
+    re.I
+)
+
+p = Path("AGENTS.md")
+
+for n, line in enumerate(p.read_text(errors="ignore").splitlines(), 1):
+    matches = sorted(set(m.lower() for m in pattern.findall(line)))
+    if matches:
+        print(f"Line {n}: {', '.join(matches)}")
+PY
+
+echo
+echo "=== SSH DIRECTORY ==="
+ls -la ~/.ssh 2>/dev/null || echo "No ~/.ssh directory"
+echo
+echo "=== GITHUB SSH TEST ==="
+ssh -o StrictHostKeyChecking=accept-new -T git@github.com 2>&1 || true
+ssh-keygen -t ed25519 -C "openclaw-vps"
+ls -la ~/.ssh
+cat ~/.ssh/id_ed25519.pub
+ssh -T git@github.com
+echo "=== SSH KEYS ==="
+ls -la ~/.ssh
+echo
+echo "=== ED25519 KEY CHECK ==="
+ls -l ~/.ssh/id_ed25519 ~/.ssh/id_ed25519.pub 2>&1
+echo
+echo "=== PUBLIC KEY FINGERPRINT ==="
+ssh-keygen -lf ~/.ssh/id_ed25519.pub 2>&1
+ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -T git@github.com
+cat ~/.ssh/id_ed25519.pub
+ssh -T git@github.com
+cd ~/.openclaw/workspace
+mkdir -p docs
+# Forzar a Bash a guardar la sesión actual
+history -w
