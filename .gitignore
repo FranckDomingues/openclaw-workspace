@@ -8,3 +8,6 @@ credentials.json
 secrets.json
 node_modules/
 .DS_Store
+
+# Local OpenClaw / MCP configuration
+config/
