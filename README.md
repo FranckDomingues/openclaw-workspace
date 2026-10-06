@@ -48,3 +48,33 @@ The OpenClaw assistant was personalized through the local chat as:
 - Personalized greeting and behavior configured
 
 ![Configure My OpenClaw](./Config%20My%20OpenClaw.png)
+
+## Second Delivery — Personalized KAI and Custom Skills
+
+The second delivery evolves the original OpenClaw workspace into KAI, a personalized assistant configured around Franck's real working methodology. Its behavior and environment guidance are defined across the five OpenClaw files: `IDENTITY.md`, `SOUL.md`, `AGENTS.md`, `USER.md`, and `TOOLS.md`. Together, they support a practical workflow: specification → checklist → architecture → implementation → validation → Git → QA.
+
+The work followed a design-first process: `SPECS.md` defines acceptance requirements, and `SKILLS_DESIGN.md` establishes the skills' purpose, inputs, outputs, and safety boundaries before implementation.
+
+Two native OpenClaw workspace skills put that approach into practice:
+
+1. **`project-session-journal`** turns a real work session into structured, evidence-aware project knowledge, distinguishing verified facts, user-provided information, and unknowns.
+2. **`project-action-planner`** turns project context into prioritized next actions, dependencies, decision gates, and verification criteria without inventing deadlines or unnecessary requirements.
+
+Both skills were validated with happy-path and failure-path acceptance tests. Telegram served as the connected interaction channel for real behavioral testing. The retained acceptance evidence is in [`docs/ACCEPTANCE_EVIDENCE.md`](docs/ACCEPTANCE_EVIDENCE.md).
+
+Important second-delivery files:
+
+```text
+SPECS.md
+SKILLS_DESIGN.md
+IDENTITY.md
+SOUL.md
+AGENTS.md
+USER.md
+TOOLS.md
+skills/
+	project-session-journal/SKILL.md
+	project-action-planner/SKILL.md
+docs/
+	ACCEPTANCE_EVIDENCE.md
+```
