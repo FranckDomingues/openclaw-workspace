@@ -85,7 +85,15 @@ Verify that the configured 4Geeks student credentials are valid and that authent
 
 ## API Endpoint(s)
 
-Pending discovery.
+`GET /v1/admissions/user/me`
+
+Base URL:
+
+`https://breathecode.herokuapp.com`
+
+Authorization:
+
+`Authorization: Token <student_token>`
 
 ## Implementation
 
@@ -93,15 +101,34 @@ Pending.
 
 ## Test Request
 
-Pending.
+A direct authenticated request was executed from the VPS using the student token loaded from a local environment variable.
+
+The token value was not printed or logged.
 
 ## Test Result
 
-Pending.
+The API returned a valid JSON object representing the authenticated user.
+
+Observed top-level response keys included:
+
+- `id`
+- `email`
+- `first_name`
+- `last_name`
+- `username`
+- `cohorts`
+- `permissions`
+- `profile`
+- `roles`
+- `settings`
 
 ## Validation
 
-Pending.
+Authentication endpoint validated successfully.
+
+The API response confirms that the configured student token can authenticate against the BreatheCode Student API.
+
+The `breathecode-auth` skill has not yet been implemented.
 
 ---
 
