@@ -1,5 +1,7 @@
 {
   "base_url": "https://breathecode.herokuapp.com",
   "auth_endpoint": "/v1/admissions/user/me",
-  "auth_header_format": "Token"
+  "auth_header_format": "Token",
+  "projects_endpoint": "/v1/assignment/user/me/task",
+  "default_page_size": 20
 }

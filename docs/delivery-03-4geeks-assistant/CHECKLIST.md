@@ -46,12 +46,12 @@
 
 ## Required Skill 2 — Get Assigned Projects
 
-- [ ] Natural-language request recorded
-- [ ] Skill created
-- [ ] API endpoint documented
-- [ ] Real project data returned
-- [ ] Project status verified
-- [ ] Evidence added to `SKILL_LOG.md`
+- [x] Natural-language request recorded
+- [x] Skill created
+- [x] API endpoint documented
+- [x] Real project data returned
+- [x] Project status verified
+- [x] Evidence added to `SKILL_LOG.md`
 - [ ] Commit created
 
 ## Required Skill 3 — Get Pending Work
@@ -114,12 +114,12 @@
 
 ## Documentation QA
 
-- [x] Every skill has its original prompt *(for Skill 1)*
-- [x] Every skill has a description *(for Skill 1)*
-- [x] Every skill lists endpoint(s) *(for Skill 1)*
-- [x] Every skill includes a test result *(for Skill 1)*
-- [x] Every skill includes validation outcome *(for Skill 1 — COMPLETED)*
-- [ ] `SKILL_LOG.md` is complete *(only Skill 1 documented)*
+- [x] Every skill has its original prompt *(for Skills 1 and 2)*
+- [x] Every skill has a description *(for Skills 1 and 2)*
+- [x] Every skill lists endpoint(s) *(for Skills 1 and 2)*
+- [x] Every skill includes a test result *(for Skills 1 and 2)*
+- [x] Every skill includes validation outcome *(Skills 1 and 2 — COMPLETED)*
+- [ ] `SKILL_LOG.md` is complete *(Skills 3, 4, and extended skills remain undocumented)*
 
 ## Git and Delivery
 

@@ -175,35 +175,89 @@ All acceptance criteria satisfied:
 
 ---
 
-# Skill 2 — Get Assigned Projects
+# Skill 2 — Get Assigned Projects (`breathecode-projects`)
 
-## Natural-Language Request
+## Natural-Language Design and Implementation Requests
 
-Pending.
+**Design request:** Design a second focused 4Geeks skill that answers “What projects are assigned to me?” without implementing it before conversational review. Keep it separate from authentication, pending-work logic, and progress summaries. Use the candidate Student API endpoint and inspect a successful authenticated response before assuming fields or pagination behavior. Do not request or expose the token.
 
-## Purpose
+**Approved implementation request:** Implement `breathecode-projects` against `GET /v1/assignment/user/me/task?task_type=PROJECT`, preserving the API's status values and returning only the approved project fields. Support pagination and safe error handling; do not calculate progress, infer pending work, include grades/submission history, modify Skill 1, or document/commit before implementation QA passes.
 
-Retrieve projects assigned to the student and their current status.
+## Skill Name
 
-## API Endpoint(s)
+`breathecode-projects`
 
-Pending discovery.
+## Single Responsibility
 
-## Implementation
+Retrieve the authenticated student's assigned project tasks and expose their current API-reported status. The skill does not calculate progress, infer pending work across task types, analyze grades or submission history, or fetch lessons/exercises.
 
-Pending.
+## API Contract
 
-## Test Request
+- **Base URL:** `https://breathecode.herokuapp.com`
+- **Endpoint:** `GET /v1/assignment/user/me/task`
+- **Required filter:** `task_type=PROJECT`
+- **Authentication:** `Authorization: Token <student_token>` using the securely configured runtime token.
+- **Confirmed response shape:** paginated top-level object with `count`, `first`, `next`, `previous`, `last`, and `results`.
+- **Confirmed project fields used:** `id`, `title`, `task_status`, `cohort.name`, `cohort.slug`, `revision_status`, and `delivered_at`.
+- **Status handling:** preserve `task_status` exactly as returned by the API; do not translate or remap it.
+- **Pagination:** supports `limit` and `offset`; exposes total `count` and only safe availability metadata for `next`/`previous`, never their URL values.
 
-Pending.
+## Implementation Files
 
-## Test Result
+- `skills/breathecode-projects/SKILL.md` — focused skill definition and behavior.
+- `config/breathecode.json` — added `projects_endpoint` and `default_page_size`, preserving the existing Skill 1 configuration keys.
 
-Pending.
+## Security and Scope Behavior
+
+- Reads the student token from the configured runtime environment; never asks for, hardcodes, prints, or logs it.
+- Never displays the Authorization header or raw API response/error body.
+- Returns only the confirmed allowlisted project fields and safe pagination metadata.
+- Does not return grades, submission history, or unrelated personal data.
+- Does not calculate progress, filter pending work by default, or fetch non-project task types.
+- Handles missing token, HTTP 401, API/network errors, unexpected response shapes, and empty results safely.
+
+## Test Results
+
+### Valid token and real project parse
+
+- **HTTP status:** `200`
+- **Result:** paginated object parsed successfully; total count observed was `25`, with `20` items in the tested page.
+- **Project parse:** at least one real item parsed using only approved output fields; `task_status` was preserved as returned.
+- **Pagination:** `next` was available and `previous` was not available on the tested page; URL values were not exposed.
+- **Token/header/raw response:** not exposed in the skill output.
+
+### Missing token
+
+- **Result:** PASS — reports missing token and skips the API call.
+
+### Invalid token
+
+- **Test input:** fake token only (the configured token was not used for this case).
+- **HTTP status:** `401`
+- **Result:** PASS — classified as invalid/expired; response body not exposed.
+
+### Empty results
+
+- **Test:** empty paginated-response fixture; not a live API query.
+- **Result:** PASS — reports no assigned projects as a successful empty result.
+
+### Final KAI runtime end-to-end test
+
+- **Result:** PASS — `E2E_SKILL_TEST: PASS`.
+- Returned the project list using only approved fields and safe pagination metadata.
+- No raw JSON, token, Authorization header, progress calculation, pending-only filtering, grade, or submission-history analysis was included.
 
 ## Validation
 
-Pending.
+**Status: COMPLETED ✅**
+
+- [x] Approved single responsibility and API contract implemented.
+- [x] Successful authenticated response and real project item parsed.
+- [x] Missing-token, fake-token/401, and empty-fixture paths tested.
+- [x] KAI runtime end-to-end test passed.
+- [x] Token, Authorization header, raw response, grades, and submission history not exposed.
+- [x] Pagination metadata kept safe; `task_status` preserved as returned.
+- [ ] Commit created — not part of this implementation/QA step.
 
 ---
 
