@@ -19,29 +19,29 @@
 
 ## Environment
 
-- [ ] Confirm OpenClaw is active
-- [ ] Confirm conversation with KAI works
-- [ ] Obtain `4g_tok`
-- [ ] Store token securely
-- [ ] Confirm token is ignored by Git
-- [ ] Test authenticated API access
+- [x] Confirm OpenClaw is active
+- [x] Confirm conversation with KAI works
+- [x] Obtain `4g_tok`
+- [x] Store token securely
+- [x] Confirm token is ignored by Git
+- [x] Test authenticated API access
 
 ## Discovery Conversation
 
-- [ ] Ask KAI how to connect securely to the 4Geeks student API
-- [ ] Record KAI's proposed approach
-- [ ] Record information KAI requests
-- [ ] Define first skill through conversation
-- [ ] Add discovery evidence to `SKILL_LOG.md`
+- [x] Ask KAI how to connect securely to the 4Geeks student API
+- [x] Record KAI's proposed approach
+- [x] Record information KAI requests
+- [x] Define first skill through conversation
+- [x] Add discovery evidence to `SKILL_LOG.md`
 
 ## Required Skill 1 — Authenticate
 
-- [ ] Natural-language request recorded
-- [ ] Skill created
-- [ ] API endpoint documented
-- [ ] Authentication tested
-- [ ] Result validated
-- [ ] Evidence added to `SKILL_LOG.md`
+- [x] Natural-language request recorded
+- [x] Skill created
+- [x] API endpoint documented
+- [x] Authentication tested
+- [x] Result validated
+- [x] Evidence added to `SKILL_LOG.md`
 - [ ] Commit created
 
 ## Required Skill 2 — Get Assigned Projects
@@ -98,28 +98,28 @@
 
 ## Security QA
 
-- [ ] No student token in tracked files
-- [ ] No token in documentation
-- [ ] No token in Git history
-- [ ] No credentials exposed in screenshots
-- [ ] Runtime configuration verified
+- [x] No student token in tracked files
+- [x] No token in documentation
+- [ ] No token in Git history *(no commits yet)*
+- [ ] No credentials exposed in screenshots *(no screenshots taken)*
+- [x] Runtime configuration verified
 
 ## Skill Architecture QA
 
-- [ ] Each skill has one responsibility
-- [ ] No oversized 4Geeks mega-skill
-- [ ] API data is treated as source of truth
-- [ ] Errors are handled clearly
-- [ ] Authentication failures are distinguishable from empty results
+- [x] Each skill has one responsibility
+- [x] No oversized 4Geeks mega-skill
+- [x] API data is treated as source of truth
+- [x] Errors are handled clearly
+- [x] Authentication failures are distinguishable from empty results
 
 ## Documentation QA
 
-- [ ] Every skill has its original prompt
-- [ ] Every skill has a description
-- [ ] Every skill lists endpoint(s)
-- [ ] Every skill includes a test result
-- [ ] Every skill includes validation outcome
-- [ ] `SKILL_LOG.md` is complete
+- [x] Every skill has its original prompt *(for Skill 1)*
+- [x] Every skill has a description *(for Skill 1)*
+- [x] Every skill lists endpoint(s) *(for Skill 1)*
+- [x] Every skill includes a test result *(for Skill 1)*
+- [x] Every skill includes validation outcome *(for Skill 1 — COMPLETED)*
+- [ ] `SKILL_LOG.md` is complete *(only Skill 1 documented)*
 
 ## Git and Delivery
 

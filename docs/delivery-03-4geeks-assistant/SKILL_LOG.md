@@ -73,15 +73,19 @@ Implementation has not started yet.
 
 ---
 
-# Skill 1 — Authenticate
+# Skill 1 — Authenticate (`breathecode-auth`)
 
 ## Natural-Language Request
 
-Pending.
+> "Use the `breathecode-auth` skill now to verify my BreatheCode Student API authentication. Do not ask me for the token. Do not display or log the token or Authorization header."
 
-## Purpose
+## Skill Name
 
-Verify that the configured 4Geeks student credentials are valid and that authenticated access to the student API is available.
+`breathecode-auth`
+
+## Responsibility
+
+Verify that the configured 4Geeks student token is valid and return the authenticated student's basic identity.
 
 ## API Endpoint(s)
 
@@ -95,40 +99,79 @@ Authorization:
 
 `Authorization: Token <student_token>`
 
-## Implementation
+## Implementation Files
 
-Pending.
+- `skills/breathecode-auth/SKILL.md` — skill definition, workflow, output schema, safety rules
+- `config/breathecode.json` — non-secret API configuration (base URL, auth endpoint, header format)
 
-## Test Request
+The student token is stored outside the repository in `.env` (gitignored).
 
-A direct authenticated request was executed from the VPS using the student token loaded from a local environment variable.
+## Security Behavior
 
-The token value was not printed or logged.
+- The token is read exclusively from the runtime environment (`.env`), never from code, arguments, or user input.
+- The token value is never printed, logged, exposed in error messages, or included in any output.
+- The `Authorization` header value is never displayed or logged.
+- The raw API response body is never dumped to output.
+- No cohort, assignment, lesson, progress, or other student data is fetched — only identity fields.
+- If the environment variable is missing, the skill reports `Missing token` and does not attempt the API call.
 
-## Test Result
+## Test Results
 
-The API returned a valid JSON object representing the authenticated user.
+### Valid token
 
-Observed top-level response keys included:
+- **Method:** Direct API call via KAI runtime with the configured token from `.env`
+- **Endpoint:** `GET /v1/admissions/user/me`
+- **HTTP Status:** `200`
+- **Result:** Authenticated successfully
+- **Identity returned:** `id`, `email`, `first_name`, `last_name`, `username`, `github.username`
+- **Token exposed:** No
+- **Authorization header exposed:** No
+- **Non-identity data fetched:** No
 
-- `id`
-- `email`
-- `first_name`
-- `last_name`
-- `username`
-- `cohorts`
-- `permissions`
-- `profile`
-- `roles`
-- `settings`
+### Missing token
+
+- **Method:** Runtime environment without `BC_STUDENT_TOKEN` set
+- **Result:** Correctly reports `Missing token` — no API call attempted
+
+### Invalid token
+
+- **Method:** API call with a fake token value
+- **HTTP Status:** `401`
+- **Result:** Correctly reports `Invalid or expired token`
+
+### Final KAI runtime end-to-end test
+
+The skill was invoked through KAI in the Telegram conversation. The runtime loaded the token from the approved `.env` mechanism, called the API, and returned the structured result:
+
+```
+Authentication: OK
+Status: 200
+Identity:
+  • id: 21626
+  • email: franciscomicros1@gmail.com
+  • first_name: Francisco Alonso
+  • last_name: Garcia Domingues
+  • username: franciscomicros1@gmail.com
+  • github.username: FranckDomingues
+```
+
+No token was requested from the user. No token or Authorization header was exposed. No non-identity student data was fetched.
 
 ## Validation
 
-Authentication endpoint validated successfully.
+**Status: COMPLETED ✅**
 
-The API response confirms that the configured student token can authenticate against the BreatheCode Student API.
-
-The `breathecode-auth` skill has not yet been implemented.
+All acceptance criteria satisfied:
+- [x] Authentication endpoint validated: `GET /v1/admissions/user/me` returns HTTP 200 with valid token
+- [x] Missing token correctly detected and reported without API call
+- [x] Invalid/expired token correctly detected (HTTP 401) and reported
+- [x] Only basic identity fields returned — no cohort, assignments, lessons, or progress data
+- [x] Token never exposed in any output, log, or error
+- [x] Authorization header never displayed or logged
+- [x] Implementation files created: `skills/breathecode-auth/SKILL.md`, `config/breathecode.json`
+- [x] Non-secret config trackable: `.gitignore` allows `config/breathecode.json` while keeping `config/mcporter.json` ignored
+- [x] `.env` remains gitignored
+- [x] Final end-to-end runtime test passed through KAI
 
 ---
 

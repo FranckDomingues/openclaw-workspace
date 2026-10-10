@@ -9,5 +9,6 @@ secrets.json
 node_modules/
 .DS_Store
 
-# Local OpenClaw / MCP configuration
-config/
+# Local OpenClaw / MCP configuration — allow specific tracked config
+config/*
+!config/breathecode.json

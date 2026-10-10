@@ -1,0 +1,5 @@
+{
+  "base_url": "https://breathecode.herokuapp.com",
+  "auth_endpoint": "/v1/admissions/user/me",
+  "auth_header_format": "Token"
+}
