@@ -351,31 +351,128 @@ Retrieve tasks for which the BreatheCode API reports `task_status=PENDING`, acro
 
 ## Natural-Language Request
 
-Pending.
+> "Give me a high-level progress summary across all my BreatheCode tasks: total tasks and counts and percentages by task_status, task_type, and cohort. Preserve API labels, keep DONE and APPROVED separate, fetch every page, and do not return individual tasks or expose credentials."
+
+Approved implementation scope: create only `breathecode-progress-summary`, reuse
+the existing secure token/configuration mechanism, validate live and controlled
+cases, and update this log and the checklist. Do not modify Skills 1-3, unrelated
+OpenClaw files, stage, or commit.
 
 ## Purpose
 
-Provide a high-level view of the student's current course progress.
+Produce aggregate progress across all authenticated student tasks. It does not
+list projects or pending tasks, infer completion, combine statuses, or analyze
+grades/submission history. Separate responsibility from `breathecode-projects`
+and `breathecode-pending-work`.
 
 ## API Endpoint(s)
 
-Pending discovery.
+- `GET /v1/assignment/user/me/task` at the existing configured BreatheCode base URL.
+- Query parameters: `limit` and `offset` only; no status, type, or cohort filter.
+- Uses the existing `BC_STUDENT_TOKEN` runtime environment and configured Token
+  authentication scheme. No additional endpoint or service is required.
 
 ## Implementation
 
-Pending.
+- Created `skills/breathecode-progress-summary/SKILL.md` with a focused workflow,
+  output contract, and executable standard-library Python reference procedure.
+- Reuses `config/breathecode.json` unchanged, including `projects_endpoint` as
+  the shared task route and `default_page_size=20`.
+- Pagination starts at zero and advances offset by the received page length.
+  Requests are rebuilt against the configured endpoint; server pagination URLs
+  are never followed or exposed. Redirects are disabled. Timeout is 30 seconds
+  per request; safety cap is 1,000 pages.
+- Validates response shape, stable API count, continuation consistency, page
+  size, and repeated task IDs internally when present. Early stop, count drift,
+  repeated tasks, cap, or sum mismatch returns `INCOMPLETE` with no partial totals.
+- Requires every task to contribute to status, type, and cohort counts. Status
+  and type strings are preserved verbatim, including new labels. Missing or
+  non-string status/type values fail safely instead of being omitted.
+- Cohorts use the exact name/slug pair. Missing/null/unlabeled cohorts remain in
+  `Absent/unknown cohort`; no task is dropped. Invalid cohort structures fail.
+- Every bucket percentage is `round(count / total_tasks * 100, 1)`, displayed
+  with one decimal. Zero tasks is successful: total 0, all sums 0, and each empty
+  dimension displays `No buckets: 0 (0.0%)`. No division by zero.
+- Independently verifies all three count sums equal collected total, which
+  must equal API count. Rounded percentages need not sum to exactly 100.0%.
+- Pagination is not an atomic snapshot; undetectable same-count changes are
+  not claimed to be prevented.
+
+## Output and Security Contract
+
+- Successful output: authentication/status, COMPLETE, total tasks, aggregate
+  counts and percentages by exact status/type and cohort labels, sum-check
+  result, and pages fetched. No individual task records.
+- Errors: missing token without a request; invalid/expired token on HTTP
+  401/403; safe API/network, malformed JSON, unexpected shape, configuration,
+  and pagination-cap failures. Withhold all aggregates on failure, explicitly
+  marking interrupted/inconsistent aggregation INCOMPLETE. No blind retry.
+- Never request, hardcode, print, log, or persist the token or auth header.
+  Never output task titles/IDs, grades, submission history, raw JSON/error
+  bodies, exception details, or raw pagination URLs. Labels are inert data.
+- Live QA loaded the existing ignored `.env` with shell tracing disabled;
+  responses were processed only in memory and output was aggregate-only.
 
 ## Test Request
 
-Pending.
+Run read-only QA against the exact Python block embedded in the new skill:
+execute it in memory under a non-main module name, inject page fetchers for
+controlled cases, then use its real GET fetcher with the securely loaded token.
+Controlled cases use no student data and do not write fixtures to the repository.
 
 ## Test Result
 
-Pending.
+**QA date:** 2026-10-14. **Controlled QA:** PASS. **Live API QA:** PASS.
+
+### Live token and real pagination
+
+- HTTP 200 on all 7 pages; limit 20; offsets 0, 20, 40, 60, 80, 100, 120.
+- Collected total and API count both **130**; final page contains 10 tasks.
+- Observed task statuses, verbatim: `DONE` **82 (63.1%)**, `PENDING`
+  **48 (36.9%)**. `APPROVED` was not observed live and is not inferred.
+- Observed task types, verbatim: `EXERCISE` **90 (69.2%)**, `LESSON`
+  **15 (11.5%)**, `PROJECT` **25 (19.2%)**.
+- 12 cohort buckets; counts in returned order:
+  20, 29, 5, 12, 17, 20, 6, 7, 4, 4, 3, 3.
+- Cohort percentages in that same order:
+  15.4%, 22.3%, 3.8%, 9.2%, 13.1%, 15.4%, 4.6%, 5.4%, 3.1%, 3.1%, 2.3%, 2.3%.
+- Status sum **130**, type sum **130**, cohort sum **130**: PASS.
+- Verified sequential offsets, equality with API count, and aggregate output
+  without token, auth header, URLs, or individual task fields.
+
+### Authentication and controlled cases
+
+- Missing token: PASS; no fetcher call; main output reports missing token and
+  contains no total. Runtime environment was temporarily cleared for this test.
+- Fake invalid token: live HTTP **401**, classified invalid/expired; API error
+  body withheld. No configured token used in this case.
+- Empty paginated fixture: PASS; total 0, three sums 0, three empty dimensions
+  show **0 (0.0%)**; successful result, not an error.
+- Two-page fixture: PASS; offsets 0 and 2; `DONE`, `APPROVED`, and a custom
+  status remain separate verbatim buckets; custom type preserved; 1/3 rounds
+  to **33.3%**. Missing cohorts aggregate as **2 (66.7%)**.
+- Forced pagination cap, absent continuation, and premature empty page:
+  PASS; INCOMPLETE, not final partial totals.
+- Unexpected top-level shape and null status: PASS; safe shape error.
+- Deliberate sum mismatch: PASS; independent validator rejects it as INCOMPLETE.
+- Simulated network failure: PASS; generic error without exception disclosure.
+- Redirect rejection and skill name/description frontmatter: PASS.
+
+These tests execute the skill's reference implementation directly. No new
+Telegram/KAI end-to-end invocation was performed or claimed in this iteration.
 
 ## Validation
 
-Pending.
+**Status: IMPLEMENTED AND QA PASSED. READY FOR COMMIT.**
+
+- [x] Approved single responsibility and unfiltered task endpoint implemented.
+- [x] Real token/HTTP 200, fake token/401, and no-request missing-token QA passed.
+- [x] All real pages aggregated; three sums equal total and API count.
+- [x] Empty result and zero percentages passed controlled QA.
+- [x] Verbatim status/type labels, separate DONE/APPROVED, and absent cohorts tested.
+- [x] Safe network/shape errors, incomplete pagination, and cap behavior tested.
+- [x] Configuration and Skills 1-3 unchanged; no unrelated files modified.
+- [ ] Commit created - intentionally not authorized; no staging or commit performed.
 
 ---
 

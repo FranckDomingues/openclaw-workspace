@@ -66,12 +66,19 @@
 
 ## Required Skill 4 — Get Progress Summary
 
-- [ ] Natural-language request recorded
-- [ ] Skill created
-- [ ] API endpoint documented
-- [ ] Progress summary returned
-- [ ] Result validated
-- [ ] Evidence added to `SKILL_LOG.md`
+- [x] Natural-language request recorded
+- [x] Skill created (`breathecode-progress-summary`)
+- [x] API endpoint documented (all tasks; no status/type/cohort filters)
+- [x] Progress summary returned (130 tasks, 7 real pages; aggregate-only)
+- [x] Result validated (status/type/cohort sums each equal 130 and API count)
+- [x] Counts and one-decimal percentages for every status/type/cohort bucket
+- [x] API status/type labels preserved; DONE and APPROVED separate (fixture)
+- [x] Missing cohorts retained under absent/unknown bucket (fixture)
+- [x] Missing token, live fake-token/401, empty fixture and zero percentages passed
+- [x] Limit/offset pagination, incomplete/cap, shape and network failures tested
+- [x] No task records, raw JSON/URLs, token or auth header in output
+- [x] Existing configuration and Skills 1-3 unchanged
+- [x] Evidence added to `SKILL_LOG.md` (direct execution; no new KAI E2E claim)
 - [ ] Commit created
 
 ## Extended Skills
@@ -114,12 +121,12 @@
 
 ## Documentation QA
 
-- [x] Every skill has its original prompt *(for Skills 1, 2, and 3)*
-- [x] Every skill has a description *(for Skills 1, 2, and 3)*
-- [x] Every skill lists endpoint(s) *(for Skills 1, 2, and 3)*
-- [x] Every skill includes a test result *(for Skills 1, 2, and 3)*
-- [x] Every skill includes validation outcome *(Skills 1, 2, and 3 — COMPLETED)*
-- [ ] `SKILL_LOG.md` is complete *(Skill 4 and extended skills remain undocumented)*
+- [x] Every required skill has its original prompt *(Skills 1-4)*
+- [x] Every required skill has a description *(Skills 1-4)*
+- [x] Every required skill lists endpoint(s) *(Skills 1-4)*
+- [x] Every required skill includes a test result *(Skills 1-4)*
+- [x] Every required skill includes validation outcome *(Skills 1-4 completed; Skill 4 direct QA)*
+- [ ] `SKILL_LOG.md` is complete *(extended skills remain undocumented)*
 
 ## Git and Delivery
 
