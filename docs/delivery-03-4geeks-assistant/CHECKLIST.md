@@ -56,12 +56,12 @@
 
 ## Required Skill 3 — Get Pending Work
 
-- [ ] Natural-language request recorded
-- [ ] Skill created
-- [ ] API endpoint documented
-- [ ] Pending work returned
-- [ ] Result verified against 4Geeks data
-- [ ] Evidence added to `SKILL_LOG.md`
+- [x] Natural-language request recorded
+- [x] Skill created
+- [x] API endpoint documented
+- [x] Pending work returned
+- [x] Result verified against 4Geeks data
+- [x] Evidence added to `SKILL_LOG.md`
 - [ ] Commit created
 
 ## Required Skill 4 — Get Progress Summary
@@ -114,12 +114,12 @@
 
 ## Documentation QA
 
-- [x] Every skill has its original prompt *(for Skills 1 and 2)*
-- [x] Every skill has a description *(for Skills 1 and 2)*
-- [x] Every skill lists endpoint(s) *(for Skills 1 and 2)*
-- [x] Every skill includes a test result *(for Skills 1 and 2)*
-- [x] Every skill includes validation outcome *(Skills 1 and 2 — COMPLETED)*
-- [ ] `SKILL_LOG.md` is complete *(Skills 3, 4, and extended skills remain undocumented)*
+- [x] Every skill has its original prompt *(for Skills 1, 2, and 3)*
+- [x] Every skill has a description *(for Skills 1, 2, and 3)*
+- [x] Every skill lists endpoint(s) *(for Skills 1, 2, and 3)*
+- [x] Every skill includes a test result *(for Skills 1, 2, and 3)*
+- [x] Every skill includes validation outcome *(Skills 1, 2, and 3 — COMPLETED)*
+- [ ] `SKILL_LOG.md` is complete *(Skill 4 and extended skills remain undocumented)*
 
 ## Git and Delivery
 

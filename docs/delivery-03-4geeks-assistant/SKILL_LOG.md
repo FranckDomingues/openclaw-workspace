@@ -261,35 +261,89 @@ Retrieve the authenticated student's assigned project tasks and expose their cur
 
 ---
 
-# Skill 3 — Get Pending Work
+# Skill 3 — Get Pending Work (`breathecode-pending-work`)
 
-## Natural-Language Request
+## Natural-Language Design and Implementation Requests
 
-Pending.
+**Design request:** Design a focused Skill 3 for “Get Pending Work” through conversational discovery. Do not implement until the endpoint response has been safely inspected. Determine task types and fields from a real authenticated response; do not invent them. Keep it separate from assigned-project listing and overall progress, and never request or expose the student token.
 
-## Purpose
+**Approved implementation request:** Create `breathecode-pending-work` to query `GET /v1/assignment/user/me/task` with the required `task_status=PENDING` filter, without restricting task type or cohort. Return only the approved task fields, preserve API-returned task types/statuses, include count and safe pagination availability, handle missing/invalid authentication and empty results, and do not calculate progress or expose raw response data. Do not modify Skills 1 or 2 or commit.
 
-Identify the student's incomplete or pending course work.
+## Skill Name
 
-## API Endpoint(s)
+`breathecode-pending-work`
 
-Pending discovery.
+## Single Responsibility
+
+Retrieve tasks for which the BreatheCode API reports `task_status=PENDING`, across task types and cohorts. Do not infer that any other status is pending, calculate progress, or analyze grades or submission history.
+
+## API Contract and Observed Response
+
+- **Endpoint:** `GET /v1/assignment/user/me/task`
+- **Required filter:** `task_status=PENDING`; no `task_type` or cohort filter by default.
+- **Confirmed response:** HTTP 200; paginated top-level object with `count`, `first`, `next`, `previous`, `last`, and `results`.
+- **Observed pending task types:** `EXERCISE`, `LESSON`.
+- **Observed status:** `PENDING`.
+- **Observed cohort structure:** object with `id`, `name`, and `slug`.
+- **Approved output fields:** `id`, `title`, `task_type`, `task_status`, `cohort.name`, and/or `cohort.slug`; API `count`; boolean next/previous availability.
+- **Pagination:** supports `limit` and `offset`. Raw pagination URLs are not returned.
 
 ## Implementation
 
-Pending.
+- `skills/breathecode-pending-work/SKILL.md` — focused procedure, response-field allowlist, pagination and error handling.
+- Reuses the existing `config/breathecode.json`; no additional configuration was required.
 
-## Test Request
+## Security and Scope Behavior
 
-Pending.
+- Uses the configured token securely from the runtime environment; never asks for, prints, or logs the token.
+- Never displays the Authorization header, raw JSON/API error body, or pagination URL.
+- Returns only the approved task fields; no grades, submission history, or other task fields.
+- Preserves `task_type` and `task_status` exactly as returned. Does not add task-type/cohort restrictions or infer pending from another status.
+- Does not calculate progress or fetch unrelated data.
 
-## Test Result
+## Test Results
 
-Pending.
+### Valid token and real pending-task parse
+
+- **Authentication endpoint:** HTTP `200`.
+- **Pending-work endpoint:** HTTP `200`.
+- **API-reported total:** `48`; `20` results on the tested page.
+- **Task types observed:** `EXERCISE`, `LESSON`.
+- **Task status observed:** `PENDING`.
+- Real task data was parsed using only the approved output fields; safe next/previous availability was returned.
+
+### Missing token
+
+- **Result:** PASS — reports a missing token and makes no API request.
+
+### Invalid token
+
+- **Test input:** fake invalid token.
+- **HTTP status:** `401`.
+- **Result:** PASS — correctly classified as invalid/expired; response body withheld.
+
+### Empty results
+
+- **Test:** empty paginated-response fixture (not a live API empty result).
+- **Result:** PASS — treated as a successful empty result, not an error.
+
+### Final KAI runtime end-to-end test
+
+- **Request:** “What work do I currently have pending?”
+- **Result:** PASS — `E2E_SKILL_TEST: PASS`.
+- Returned only approved fields, preserved task types/statuses, and provided safe next/previous availability.
+- No raw JSON, pagination URLs, token, Authorization header, grades, submission history, or progress calculations were returned.
 
 ## Validation
 
-Pending.
+**Status: COMPLETED ✅**
+
+- [x] Approved API contract and single responsibility implemented.
+- [x] Authenticated pending endpoint returned HTTP 200 and real tasks were parsed.
+- [x] Missing-token, fake-token/401, and empty-fixture paths passed.
+- [x] Final KAI runtime end-to-end test passed.
+- [x] Output remained within the approved field/security boundaries.
+- [ ] Commit created — not part of this implementation/QA step.
 
 ---
 
