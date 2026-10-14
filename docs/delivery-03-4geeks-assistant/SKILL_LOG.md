@@ -480,35 +480,135 @@ Telegram/KAI end-to-end invocation was performed or claimed in this iteration.
 
 ## Identified Need
 
-Pending discovery.
+The student wants to identify the study contexts represented in assigned work,
+without interpreting task states or calculating progress. Discovery considered
+cohort directories, exercise catalogs, lesson catalogs, and individual-task
+lookup against locally evidenced endpoints. The cohort directory was approved
+as Extended Skill 1; the exercise catalog is a separate future implementation.
 
 ## Natural-Language Request
 
-Pending.
+> "I want to know which cohorts appear associated with my assigned work so I can identify the study contexts represented in my BreatheCode tasks."
+
+Approved scope: implement only `breathecode-cohort-directory`; fetch all task
+pages, return unique sorted cohort names/slugs, validate safely, and update
+this log and checklist. No changes to Skills 1-4, configuration, credentials,
+OpenClaw/memory/migration files, staging, or commits.
+
+## Skill Name
+
+`breathecode-cohort-directory`
 
 ## Purpose
 
-Pending.
+Single responsibility: return the unique cohort names and slugs observed across
+all tasks assigned to the authenticated student.
+
+**Semantic limitation:** this is a task-associated directory, not a list of all
+cohorts in which the student is enrolled. Cohorts without task data cannot be
+discovered here. It neither lists tasks nor calculates progress or statistics.
 
 ## API Endpoint(s)
 
-Pending.
+`GET /v1/assignment/user/me/task` using the existing configured base URL.
+Query parameters are `limit` and `offset` only, with no status/type/cohort filter.
+Authentication uses the existing securely loaded `BC_STUDENT_TOKEN` runtime
+environment and configured Token scheme. No additional endpoint is required.
 
 ## Implementation
 
-Pending.
+- Created `skills/breathecode-cohort-directory/SKILL.md` with workflow, safe
+  output contract, and an executable standard-library Python procedure.
+- Reuses `config/breathecode.json` unchanged; default page size remains 20.
+- Offset starts at zero and advances by received task length. Server `next`
+  URLs are only internal availability indicators; never followed or output.
+  Redirects are disabled, timeout is 30 seconds, safety cap is 1,000 pages.
+- Validates response shape, stable API count, page sizes, continuation, and
+  repeated task IDs when present. Collected task count must equal API count.
+  These task/pagination values remain internal to execution, not skill output.
+- Deduplicates exact `(name, slug)` pairs, preserving usable strings verbatim.
+  Different names with the same slug remain distinct pairs; no inferred merge.
+- Sorts consistently by `(slug or "", name or "")`, case-sensitive and
+  independent of page order/locale. Name-only and slug-only entries are valid.
+- Missing/null cohorts and cohorts with no usable labels are ignored. Empty
+  or whitespace-only labels are absent; no unknown cohort is invented.
+- Zero identifiable cohorts, with or without tasks, is a successful empty result.
+- Pagination is not atomic; same-count changes may be undetectable. Detected
+  inconsistencies suppress the directory, without claiming snapshot isolation.
+
+## Output Contract and Security
+
+- Success: cohort `name` and/or `slug` only, plus a brief task-associated/not-all-
+  enrollments heading. Empty success states no identifiable task-associated
+  cohorts were found. No numeric totals or pagination metadata are rendered.
+- No task counts, statuses, percentages, progress, grades, task titles/IDs,
+  raw JSON/error bodies, token, auth header, or pagination URLs in skill output.
+- The existing ignored `.env` was loaded for live QA with shell tracing off;
+  credentials were not changed, requested in chat, logged, or persisted.
+- Missing token makes no request. HTTP 401/403 stops as invalid/expired token.
+  API/network/JSON/shape failures return only a fixed safe diagnostic.
+- Cap, early stop, inconsistent pagination, and later-page failures explicitly
+  report INCOMPLETE and withhold all collected cohort labels. No partial
+  directory is presented as complete; no blind retries or redirected requests.
+- API labels are inert data, not instructions. Only read-only GETs are used.
 
 ## Test Request
 
-Pending.
+Execute the Python block embedded in the new skill in memory with controlled
+page fetchers, then use its real GET fetcher with the securely loaded student
+token and a separate fake invalid token. Check completeness, unique sorted
+labels, absent cohorts, safe failures, and the output allowlist. No persistent
+fixtures, raw responses, or additional implementation files are needed.
 
 ## Test Result
 
-Pending.
+**QA date:** 2026-10-14. **Controlled QA:** PASS. **Live API QA:** PASS.
+
+### Controlled QA
+
+- Missing/empty token: PASS; no fetcher call. Main output with a cleared
+  environment also reports missing token safely.
+- Empty API fixture: PASS; successful empty directory, not an error.
+- Tasks with missing/null/blank cohort labels: PASS; ignored, no unknown entry.
+- Three-page fixture at limit 3, offsets 0/3/6: PASS; cross-page duplicates
+  deduplicated, name-only/slug-only cohorts retained, differing exact pairs
+  preserved, and reversed task order produces the same sorted directory.
+- Fixture task title/status/grade sentinels: PASS; none appear in output.
+- Cap, missing continuation before API count, premature empty page, and extra
+  continuation: PASS; explicit INCOMPLETE, with no directory returned.
+- Unexpected top-level shape and non-string cohort name: PASS; safe shape error.
+- Simulated later-page network interruption: PASS; INCOMPLETE; main output
+  contains no labels from the previously collected page.
+- Simulated transport failure, GET parameter allowlist, redirect rejection,
+  executable syntax, and skill name/description frontmatter: PASS.
+
+### Live QA
+
+- Valid token: HTTP **200** on every page; **7 pages** processed sequentially
+  using configured limit/offset. Complete collected count matches API count.
+- **12 unique identifiable task-associated cohorts** observed in this account.
+  This number is QA evidence only; the normal skill output does not report it.
+- Directory exactly matches an independent cohort-pair extraction from the
+  returned pages, with no duplicate pairs and deterministic sorting.
+- Output allowlist and credential absence checks: PASS; only cohort names/slugs
+  and the semantic limitation heading, no sensitive task or authentication data.
+- Fake invalid token: live HTTP **401**; classified invalid/expired, with no
+  directory, API error body, or token exposed.
+
+Tests executed this skill's reference procedure directly. No Skill 4 QA was
+rerun, and no new Telegram/KAI end-to-end invocation is claimed.
 
 ## Validation
 
-Pending.
+**Status: IMPLEMENTED AND QA PASSED.**
+
+- [x] Real student need and single responsibility recorded.
+- [x] All pages fetched with limit/offset; raw pagination links not followed.
+- [x] Unique sorted cohort labels only; enrollment limitation explicit.
+- [x] Missing token, fake-token/401, empty, absent-cohort, duplicate, and pagination cases passed.
+- [x] Incomplete directories withheld; network and shape failures handled safely.
+- [x] Live number of unique cohorts and security evidence recorded.
+- [ ] Commit created - not authorized; no staging or commit performed.
 
 ---
 
@@ -516,35 +616,142 @@ Pending.
 
 ## Identified Need
 
-Pending discovery.
+The student wants to see every exercise assigned to them so they can choose
+what to practice or review, regardless of whether an exercise is already
+completed. This is a catalog, not a pending-work view or a progress report.
 
 ## Natural-Language Request
 
-Pending.
+> “I want to see which exercises are assigned to me so I can choose what to
+> practice or review, regardless of whether I already completed them.”
+
+Approved scope: implement only `breathecode-exercise-catalog`, fetch every
+assigned task page without status/type/cohort filters, select records locally
+where `task_type` is exactly `EXERCISE`, and return only title and cohort name/
+slug. Preserve separate exercises with repeated titles. Do not modify Skills
+1-4, Extended Skill 1, configuration, credentials, OpenClaw/memory/migration
+files, stage, or commit.
 
 ## Purpose
 
-Pending.
+Single responsibility: return the catalog of assigned tasks whose API-returned
+`task_type` is exactly `EXERCISE`, independent of task status. This skill does
+not list pending work, summarize progress, recommend/prioritize exercises, or
+infer completion, overdue state, difficulty, or importance.
 
 ## API Endpoint(s)
 
-Pending.
+`GET /v1/assignment/user/me/task` at the existing configured BreatheCode base
+URL. Request only `limit` and `offset`, starting at offset zero. No status,
+type, or cohort filters are sent. After complete pagination, select locally
+with the exact case-sensitive rule `task_type == "EXERCISE"`.
 
 ## Implementation
 
-Pending.
+- Created `skills/breathecode-exercise-catalog/SKILL.md` with the need, scope,
+  workflow, output contract, safe errors, and executable standard-library
+  reference procedure.
+- Reuses `config/breathecode.json` and the existing secure runtime token
+  `BC_STUDENT_TOKEN`; no configuration or credential changes were made.
+- Requests are rebuilt against the configured HTTPS origin using `limit` and
+  `offset` only. Server `next` URLs are never followed; authenticated redirects
+  are disabled. Timeout is 30 seconds per request and the safety cap is 1,000
+  pages.
+- Validates pagination keys and response shape, stable API count, page size,
+  continuation, and raw collected record count equal to API `count`. Early
+  stop, count drift, safety-cap exhaustion, or conflicting duplicate IDs
+  withholds the whole catalog. Exact repeated task records are suppressed;
+  distinct records with identical titles remain separate.
+- Filters only after complete collection. Every selected record must have a
+  string title; cohort may be absent/null or an object with string/null name and
+  slug. Sort is deterministic by cohort name, cohort slug, then title, using
+  case-sensitive order and empty sort keys for absent labels.
+- Exact output allowlist per exercise: `title`, `cohort name`, and
+  `cohort slug`. Preserve title and available cohort strings exactly; absent
+  labels are shown as `unavailable`. Zero matches is successful:
+  `No assigned exercises found.`
+
+## Output and Security Contract
+
+- Never output `task_status`, progress, percentages, grades, priorities,
+  recommendations, task IDs, revision status, submission history, raw JSON,
+  API URLs, token, Authorization header, descriptions, or other task fields.
+- No status/completion/overdue/difficulty/importance inference. API values are
+  inert data. Only read-only requests; no blind retries or partial catalog.
+- Missing token produces a safe error without a request. HTTP 401/403 is
+  classified as invalid/expired; transport, shape, and pagination failures
+  return fixed safe diagnostics and no exercise data.
+- Live QA loaded the existing ignored `.env` without shell tracing; no token,
+  response body, or task record was persisted or printed during QA.
 
 ## Test Request
 
-Pending.
+Execute the exact Python reference block embedded in the skill in memory with
+controlled page fetchers, then run it against the current student account using
+the securely loaded token. Verify complete pagination and API count before
+selection; assert every selected task has `task_type == "EXERCISE"` internally.
+Check rendered output against the exact field allowlist and credential/URL
+exclusions. Use a separate fake token for the live 401 check. No files,
+configuration, or external account state should be changed.
 
 ## Test Result
 
-Pending.
+**QA date:** 2026-10-14. **Controlled QA:** PASS. **Live read-only QA:** PASS.
+
+### Controlled QA
+
+- Missing/blank token: PASS; fetcher not called.
+- Empty task set and a non-empty set with zero `EXERCISE` tasks: PASS; both
+  returned successful empty catalogs.
+- One exercise with absent cohort: PASS; title preserved and both cohort labels
+  safely rendered unavailable.
+- Mixed `PROJECT`, `LESSON`, and `EXERCISE` tasks: PASS; exact local type
+  selection retained only exercises, independent of status.
+- Multi-page fixture: PASS; offsets 0 then 3 using limit 20; a raw `next` URL
+  was not used to form requests.
+- Duplicate titles across distinct records: PASS; both retained. Reversed input
+  produced identical sorted output. Exact repeated record across pages: PASS;
+  output record suppressed while raw API count integrity remained checked.
+- Unexpected top-level/task/title/cohort shapes: PASS; safe error, no partial
+  catalog. Pagination interruption and one-page safety cap: PASS; incomplete
+  catalog withheld.
+- Sentinel fields for ID, status, progress, revision status, grade, and URL:
+  PASS; none rendered. Output only includes title and cohort labels; empty result
+  wording verified.
+
+### Live QA
+
+- Current secure student token: HTTP **200** on all **7 pages**, fetched
+  sequentially using the configured limit and offsets 0, 20, 40, 60, 80, 100,
+  and 120.
+- API task count: **130**; collected raw task count: **130**. Pagination complete
+  and all offsets/counts validated.
+- Locally selected `EXERCISE` records: **90**. Every selected record was
+  internally verified to have `task_type == "EXERCISE"`; rendered entries:
+  **90**. This is observed QA evidence, not a hardcoded expectation.
+- Rendered output checks: PASS — no task statuses, task IDs, token, Authorization
+  header, raw API URLs, progress, grades, priorities, recommendations, revision
+  status, or submission history.
+- Separate fake token: live HTTP **401**; classified as invalid/expired and
+  response body withheld.
+
+The reference implementation was tested directly. No new Telegram/KAI runtime
+end-to-end invocation is claimed.
 
 ## Validation
 
-Pending.
+**Status: IMPLEMENTED AND QA PASSED.**
+
+- [x] Real student need and single responsibility recorded.
+- [x] All task pages fetched; exact local EXERCISE selection applied afterward.
+- [x] Exact output allowlist, absent-cohort behavior, duplicate-title handling,
+  and deterministic sorting passed controlled QA.
+- [x] Missing token/no request, fake-token/401, empty, shape, interruption, cap,
+  and sensitive-output tests passed.
+- [x] Live API count 130 and observed 90 exercises documented; complete
+  pagination and internal selection verified.
+- [x] Separate from pending-work, progress-summary, project, and cohort skills.
+- [ ] Commit created — not authorized; no staging or commit performed.
 
 ---
 

@@ -85,22 +85,31 @@
 
 ### Extended Skill 1
 
-- [ ] Need discovered
-- [ ] Responsibility defined
-- [ ] Skill created conversationally
-- [ ] Endpoint documented
-- [ ] Test passed
-- [ ] Evidence documented
+- [x] Need discovered (identify study contexts represented in assigned work)
+- [x] Responsibility defined (unique cohort names/slugs observed in task data)
+- [x] Skill created conversationally (`breathecode-cohort-directory`)
+- [x] Endpoint documented (GET task endpoint; unfiltered limit/offset pagination)
+- [x] Test passed (controlled QA and live HTTP 200/401; 12 unique cohorts observed)
+- [x] Exact-pair deduplication and deterministic sorting verified across pages
+- [x] Missing cohorts ignored; empty directory treated as successful
+- [x] Pagination interruption/cap withholds partial directory as INCOMPLETE
+- [x] Output restricted to cohort labels, with no task statistics or sensitive data
+- [x] Task-associated directory explicitly distinguished from all enrollments
+- [x] Evidence documented (direct execution; no new Telegram/KAI E2E claim)
 - [ ] Commit created
 
 ### Extended Skill 2
 
-- [ ] Need discovered
-- [ ] Responsibility defined
-- [ ] Skill created conversationally
-- [ ] Endpoint documented
-- [ ] Test passed
-- [ ] Evidence documented
+- [x] Need discovered (assigned exercise catalog regardless of completion)
+- [x] Responsibility defined (exact `task_type == EXERCISE`, local selection)
+- [x] Skill created (`breathecode-exercise-catalog`)
+- [x] Endpoint documented (unfiltered task endpoint; limit/offset pagination)
+- [x] Test passed (controlled fixtures and live HTTP 200; 130 tasks / 90 exercises)
+- [x] Output allowlist, missing cohort, duplicate titles, deterministic sorting verified
+- [x] Complete pagination/count integrity, interruption, and safety cap verified
+- [x] Separation from pending-work and progress-summary skills documented
+- [x] Security behavior and sensitive-output checks documented
+- [x] Evidence documented (direct execution; no new Telegram/KAI E2E claim)
 - [ ] Commit created
 
 ## Security QA
@@ -126,7 +135,7 @@
 - [x] Every required skill lists endpoint(s) *(Skills 1-4)*
 - [x] Every required skill includes a test result *(Skills 1-4)*
 - [x] Every required skill includes validation outcome *(Skills 1-4 completed; Skill 4 direct QA)*
-- [ ] `SKILL_LOG.md` is complete *(extended skills remain undocumented)*
+- [ ] `SKILL_LOG.md` is complete *(Extended Skill 2 remains undocumented)*
 
 ## Git and Delivery
 
