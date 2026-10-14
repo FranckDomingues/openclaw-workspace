@@ -24,8 +24,10 @@ Teach OpenClaw/KAI how to connect securely to the 4Geeks student API through Bre
 2. Get assigned projects
 3. Get pending work
 4. Get progress summary
-5. Extended skill #1 — to be discovered
-6. Extended skill #2 — to be discovered
+5. **Extended: `breathecode-cohort-directory`** — lists unique cohort names/slugs observed in the student's assigned task data; it does not claim to list all enrollments.
+6. **Extended: `breathecode-exercise-catalog`** — lists assigned tasks whose API-returned type is exactly `EXERCISE`, regardless of status.
+
+All four required skills and both extended skills are implemented and documented in `SKILL_LOG.md`. The two extended skills have controlled and live API QA evidence. Their recorded checks were direct executions; this documentation does not claim a new Telegram/KAI end-to-end invocation for every skill.
 
 ## Development Method
 
@@ -58,3 +60,5 @@ It must:
 - `SPECS.md` — requirements and architecture constraints
 - `CHECKLIST.md` — implementation checkpoint
 - `SKILL_LOG.md` — required evidence for every skill
+
+The skill set is intentionally limited to the six capabilities above. A general recommendation or prioritization engine is not part of this delivery.

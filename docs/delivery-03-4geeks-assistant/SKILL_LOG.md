@@ -69,7 +69,7 @@ Responsibility:
 
 Verify that the configured 4Geeks student token is valid and return the authenticated student's basic identity using `GET /v1/admissions/user/me`.
 
-Implementation has not started yet.
+At the time this discovery entry was written, implementation had not started yet. The later sections of this log record the completed implementation and validation of all six skills.
 
 ---
 
@@ -484,7 +484,7 @@ The student wants to identify the study contexts represented in assigned work,
 without interpreting task states or calculating progress. Discovery considered
 cohort directories, exercise catalogs, lesson catalogs, and individual-task
 lookup against locally evidenced endpoints. The cohort directory was approved
-as Extended Skill 1; the exercise catalog is a separate future implementation.
+as Extended Skill 1. The exercise catalog was subsequently implemented as Extended Skill 2; see the completed section below.
 
 ## Natural-Language Request
 
@@ -757,11 +757,13 @@ end-to-end invocation is claimed.
 
 # Final Validation
 
-- [ ] Four required skills implemented
-- [ ] Two extended skills implemented
-- [ ] All skills tested against real API data
-- [ ] Each skill has one clear responsibility
-- [ ] No credentials committed
-- [ ] All prompts documented
-- [ ] All endpoints documented
-- [ ] All test results documented
+- [x] Four required skills implemented
+- [x] Two extended skills implemented
+- [x] Real API data used for live validation of the skills; controlled tests supplement live checks where recorded
+- [x] Each skill has one clear responsibility
+- [x] No credentials found in tracked files or the reviewed branch history during final audit
+- [x] Natural-language requests/prompts documented for all six skills
+- [x] API endpoints documented for all six skills
+- [x] Test results and validation outcomes documented for all six skills
+
+The evidence is not uniform: some earlier skills have recorded KAI/Telegram runtime end-to-end tests, while later skill QA is documented as direct execution. No claim is made that every skill received a new Telegram/KAI end-to-end invocation. Repository-wide final QA, push, and submission readiness are tracked separately in `CHECKLIST.md` and are not asserted as complete here.

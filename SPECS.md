@@ -1,5 +1,7 @@
 # Mi Agente, A Mi Manera — Project Specification
 
+> **Delivery 03 reference:** The separate 4Geeks student-assistant delivery extends this OpenClaw/KAI workspace with six focused BreatheCode skills. Its scope and evidence are documented in [`docs/delivery-03-4geeks-assistant/README.md`](docs/delivery-03-4geeks-assistant/README.md). This reference does not change or supersede the specification below, which records the earlier Mi Agente, A Mi Manera project contract.
+
 ## 1. Project Objective
 
 Personalize the existing OpenClaw assistant **KAI** for Francisco, then design, implement, and validate at least two genuine OpenClaw custom skills that embody that personalization. At least one skill must create a real, independently verifiable result through a service already connected to this workspace. Completion means the five personalization files express confirmed, useful context and behavior; the skills pass real-input tests; project health and unrelated baseline warnings are reported accurately; and a reviewed, secret-free project history and evidence package are delivered to the existing GitHub repository.

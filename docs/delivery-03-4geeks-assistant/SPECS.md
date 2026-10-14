@@ -126,3 +126,7 @@ Delivery 03 is complete only when:
 - final QA passes
 - Git working tree is clean
 - work is pushed to GitHub
+
+## Final Implementation Notes
+
+The four required capabilities and two student-need-driven extended capabilities are implemented as the six skills listed in the delivery README and documented in `SKILL_LOG.md`. The example question “What should I work on next?” expresses a possible student need; it does not require a recommendation or prioritization engine. No such engine is included in the implemented skill set. The exercise catalog reports assigned exercises without inferring priority, completion advice, or what the student should do next.

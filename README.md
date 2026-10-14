@@ -62,6 +62,10 @@ Two native OpenClaw workspace skills put that approach into practice:
 
 Both skills were validated with happy-path and failure-path acceptance tests. Telegram served as the connected interaction channel for real behavioral testing. The retained acceptance evidence is in [`docs/ACCEPTANCE_EVIDENCE.md`](docs/ACCEPTANCE_EVIDENCE.md).
 
+## Third Delivery — 4Geeks Student Assistant
+
+Delivery 03 extends KAI with six focused BreatheCode skills: `breathecode-auth`, `breathecode-projects`, `breathecode-pending-work`, `breathecode-progress-summary`, `breathecode-cohort-directory`, and `breathecode-exercise-catalog`. The delivery's requirements, checkpoint, implementation log, and test evidence are maintained in [`docs/delivery-03-4geeks-assistant/`](docs/delivery-03-4geeks-assistant/). The two extended skills have recorded direct controlled/live QA; this summary does not imply a new Telegram/KAI end-to-end test for every skill.
+
 Important second-delivery files:
 
 ```text
